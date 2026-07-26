@@ -4,10 +4,13 @@
 
 ## Смотреть онлайн
 
-После публикации GitHub Pages:
+- **Репозиторий:** https://github.com/puholet-sketch/virtu-digest-may-2026
+- **Презентация (GitHub Pages):** https://puholet-sketch.github.io/virtu-digest-may-2026/
+- **Шаблон Word:** кнопка на обложке презентации или  
+  https://puholet-sketch.github.io/virtu-digest-may-2026/%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%B2%D0%B2%D0%BE%D0%B4%D0%B0_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85_%D0%B4%D0%B0%D0%B9%D0%B4%D0%B6%D0%B5%D1%81%D1%82.docx  
+  (файл [`docs/шаблон_ввода_данных_дайджест.docx`](docs/шаблон_ввода_данных_дайджест.docx))
 
-- **Презентация:** `https://<user>.github.io/<repo>/`
-- **Скачать шаблон Word:** кнопка на обложке презентации или файл [`docs/шаблон_ввода_данных_дайджест.docx`](docs/шаблон_ввода_данных_дайджест.docx)
+После публикации GitHub Pages:
 
 ## Что в репозитории
 

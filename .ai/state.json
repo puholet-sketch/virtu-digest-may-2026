@@ -1,19 +1,20 @@
 {
-  "context_version": 1,
-  "timestamp": "2026-07-26T20:31:00+03:00",
+  "context_version": 2,
+  "timestamp": "2026-07-26T20:40:00+03:00",
   "context_hash": null,
   "active_files": [
-    "output/презентация_статус_проектов_май_2026.html",
-    "templates/generate_digest_input_docx.py",
-    "docs/index.html"
+    "docs/index.html",
+    "docs/шаблон_ввода_данных_дайджест.docx",
+    "templates/generate_digest_input_docx.py"
   ],
   "active_file_hashes": {},
   "decisions": [
-    "Публикация через GitHub Pages (docs/)",
-    "Word-шаблон ввода — красно-чёрная палитра Virtu/JX"
+    "Repo: https://github.com/puholet-sketch/virtu-digest-may-2026",
+    "Pages: https://puholet-sketch.github.io/virtu-digest-may-2026/",
+    "Word template download on presentation cover"
   ],
   "blockers": [],
   "last_error": null,
   "retry_count": 0,
-  "next_action": "push repo and enable Pages"
+  "next_action": null
 }
