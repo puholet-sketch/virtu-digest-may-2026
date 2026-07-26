@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Статус проектов — май 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419; --surface: #1a2332; --surface2: #243044;
+      --text: #e8edf4; --muted: #8b9cb3; --accent: #3b82f6;
+      --accent2: #10b981; --accent3: #f59e0b; --accent4: #8b5cf6;
+      --danger: #ef4444; --border: #2d3a4f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; }
+    .deck { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    .slide { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2.5rem; margin-bottom: 2rem; }
+    .slide-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; }
+    .slide-num { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.35rem; }
+    h2.vfos-portfolio { font-size: 1.02rem; line-height: 1.38; max-width: 920px; }
+    .subtitle { color: var(--muted); font-size: 0.95rem; line-height: 1.45; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+    .kpi { background: var(--surface2); border-radius: 12px; padding: 1.1rem; border-left: 4px solid var(--accent); }
+    .kpi.green { border-left-color: var(--accent2); }
+    .kpi.amber { border-left-color: var(--accent3); }
+    .kpi.purple { border-left-color: var(--accent4); }
+    .kpi-value { font-size: 1.75rem; font-weight: 700; }
+    .kpi-label { font-size: 0.82rem; color: var(--muted); margin-top: 0.25rem; }
+    .kpi-inline { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+    .kpi-inline .kpi { flex: 1; min-width: 200px; padding: 0.85rem 1rem; }
+    .kpi-inline .kpi-value { font-size: 1.35rem; }
+    .split-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 1.25rem; }
+    @media (max-width: 860px) { .split-charts { grid-template-columns: 1fr; } }
+    .chart-box { background: var(--surface2); border-radius: 12px; padding: 1.15rem; }
+    .chart-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.75rem; }
+    .section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent2); margin: 1.5rem 0 0.75rem; }
+    .section-label.tp { color: var(--accent3); }
+    .section-label.blue { color: var(--accent); }
+    .section-label.purple { color: var(--accent4); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.75rem; }
+    th, td { padding: 0.55rem 0.7rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 0.78rem; }
+    .badge { display: inline-block; padding: 0.15rem 0.55rem; border-radius: 999px; font-size: 0.72rem; font-weight: 600; }
+    .badge-active { background: rgba(16,185,129,0.15); color: var(--accent2); }
+    .badge-prod { background: rgba(59,130,246,0.15); color: var(--accent); }
+    .badge-pause { background: rgba(245,158,11,0.15); color: var(--accent3); }
+    .badge-wait { background: rgba(139,92,246,0.15); color: var(--accent4); }
+    .detail-list { list-style: none; padding: 0; }
+    .detail-list li { padding: 0.55rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; color: var(--muted); }
+    .detail-list li strong { color: var(--text); }
+    .gratitude-table td:first-child { font-weight: 600; white-space: nowrap; width: 160px; }
+    .gratitude-table.vfos-activities { font-size: 0.78rem; }
+    .gratitude-table.vfos-activities th { font-size: 0.72rem; padding: 0.45rem 0.5rem; }
+    .gratitude-table.vfos-activities td { padding: 0.38rem 0.5rem; line-height: 1.35; vertical-align: top; }
+    .gratitude-table.vfos-activities .sk-cell { width: 52px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+    .gratitude-table.vfos-activities tr.sk-alpha .sk-cell { color: var(--accent); }
+    .gratitude-table.vfos-activities tr.sk-raif .sk-cell { color: var(--accent4); }
+    .gratitude-table.vfos-activities tr.grp-amber td.vfos-dir { color: var(--accent3); font-weight: 600; white-space: nowrap; }
+    .gratitude-table.vfos-activities tr.sk-alpha td.vfos-dir { color: var(--accent); font-weight: 600; white-space: nowrap; }
+    .gratitude-table.vfos-activities tr.sk-raif td.vfos-dir { color: var(--accent4); font-weight: 600; white-space: nowrap; }
+    .gratitude-table.vfos-activities .vfos-func { color: var(--text) !important; font-weight: 400; }
+    .gratitude-table tr.grp td:first-child { color: var(--accent2); }
+    .gratitude-table tr.grp-blue td:first-child { color: var(--accent); }
+    .gratitude-table tr.grp-purple td:first-child { color: var(--accent4); }
+    .pm-matrix td:first-child, .pm-matrix th:first-child { white-space: nowrap; }
+    .cover { text-align: center; padding: 4rem 2rem; }
+    .cover h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .cover-actions { margin-top: 1.75rem; display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .btn-download {
+      display: inline-block; padding: 0.7rem 1.25rem; border-radius: 10px;
+      background: #C00000; color: #fff !important; text-decoration: none;
+      font-weight: 700; font-size: 0.92rem; border: 1px solid #C00000;
+    }
+    .btn-download:hover { background: #a00000; }
+    .btn-secondary {
+      display: inline-block; padding: 0.7rem 1.25rem; border-radius: 10px;
+      background: transparent; color: var(--text) !important; text-decoration: none;
+      font-weight: 600; font-size: 0.92rem; border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: #C00000; color: #FB5A5A !important; }
+    footer { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 1rem; }
+    .ofr-grid { display: grid; grid-template-columns: minmax(0, 252px) minmax(0, 1fr); gap: 1.5rem; align-items: start; margin-top: 0.75rem; }
+    .ofr-chart-col { min-width: 0; max-width: 252px; }
+    .ofr-chart-col .chart-box { padding: 0.7rem; overflow: hidden; display: flex; flex-direction: column; }
+    .ofr-chart-col .chart-title { font-size: 0.82rem; margin-bottom: 0.45rem; flex-shrink: 0; }
+    .ofr-chart-col .chart-canvas-wrap { position: relative; height: 188px; min-height: 0; overflow: hidden; }
+    .ofr-chart-col .chart-canvas-wrap.compact { height: 118px; }
+    .ofr-chart-col .chart-canvas-wrap.compact-xs { height: 82px; }
+    .team-chart-stack { display: flex; flex-direction: column; gap: 1.1rem; }
+    .team-chart-item { display: flex; flex-direction: column; min-height: 0; }
+    .team-chart-item > .team-label { flex-shrink: 0; margin-bottom: 0.35rem; }
+    .ofr-chart-col .team-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent4); }
+    .ofr-chart-col .team-label.blue { color: var(--accent); }
+    .ofr-chart-col .team-label.amber { color: var(--accent3); }
+    .ofr-chart-col .team-label.purple { color: var(--accent4); }
+    .ofr-grid.presale-grid { align-items: stretch; }
+    .presale-grid .team-chart-item { flex: 1; min-height: 0; }
+    .presale-grid .team-chart-item .chart-box { flex: 1; min-height: 0; }
+    .presale-grid .team-chart-item .chart-canvas-wrap { flex: 1; height: auto; min-height: 140px; }
+    .ofr-grid.team-single { align-items: stretch; }
+    .team-single .ofr-chart-col { display: flex; flex-direction: column; }
+    .team-single .team-chart-item { flex: 1; min-height: 0; }
+    .team-single .team-chart-item .chart-box { flex: 1; min-height: 0; }
+    .team-single .team-chart-item .chart-canvas-wrap { flex: 1; height: auto; min-height: 160px; }
+    .ofr-chart-col canvas { display: block; width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: none !important; min-height: 0 !important; }
+    .ofr-content-col { min-width: 0; overflow: hidden; }
+    .ofr-content-col .detail-list li { padding: 0.38rem 0; font-size: 0.84rem; }
+    .ofr-content-col .detail-list li.gw-note { font-size: 0.8rem; line-height: 1.42; }
+    .ofr-content-col .detail-list.compact li { padding: 0.28rem 0; font-size: 0.78rem; line-height: 1.38; }
+    .ofr-content-col .detail-list.compact li strong.ifl { color: var(--accent2); }
+    .ofr-content-col .detail-list.compact li strong.base { color: var(--accent3); }
+    .ofr-content-col .detail-list.compact li strong.shared { color: var(--accent); }
+    .ofr-content-col .detail-list.wip li { padding: 0.25rem 0; font-size: 0.78rem; }
+    .ofr-content-col .team-section-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; text-transform: none; margin: 0.55rem 0 0.15rem; }
+    .ofr-content-col .team-section-label:first-of-type { margin-top: 0; }
+    .ofr-content-col .team-section-label.ofr { color: var(--accent2); }
+    .ofr-content-col .team-section-label.outstaff { color: var(--accent3); }
+    .ofr-content-col .detail-list.team-block { margin: 0.1rem 0 0 0.55rem; padding-left: 0.55rem; border-left: 2px solid; list-style: none; }
+    .ofr-content-col .detail-list.team-block li { padding: 0.28rem 0; font-size: 0.76rem; line-height: 1.37; border-bottom: 1px solid var(--border); color: var(--muted); }
+    .ofr-content-col .detail-list.team-block li:last-child { border-bottom: none; padding-bottom: 0.08rem; }
+    .ofr-content-col .detail-list.team-block.ofr { border-left-color: rgba(16, 185, 129, 0.45); }
+    .ofr-content-col .detail-list.team-block.outstaff { border-left-color: rgba(245, 158, 11, 0.45); }
+    .ofr-content-col .detail-list.team-block.ofr li strong { color: var(--accent2); }
+    .ofr-content-col .detail-list.team-block.outstaff li strong { color: var(--accent3); }
+    .ofr-content-col .detail-list.team-block li.gw-note { font-size: 0.74rem; line-height: 1.4; }
+    .ofr-content-col .section-label { margin: 0.85rem 0 0.45rem; }
+    .ofr-content-col .section-label:first-child { margin-top: 0; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+    .tp-four-col { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-top: 1rem; }
+    .tp-layout-3col { display: grid; grid-template-columns: 1fr 1fr 1.08fr; grid-template-rows: repeat(3, minmax(0, 1fr)); gap: 0.55rem 0.7rem; margin-top: 0.5rem; align-items: stretch; min-height: 520px; }
+    .tp-stack-item { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+    .tp-stack-item .section-label.tp { font-size: 0.68rem; margin: 0 0 0.3rem; line-height: 1.3; min-height: 2.5em; }
+    .tp-stack-item .chart-box { padding: 0.5rem 0.55rem; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .tp-stack-item .chart-canvas-mini { position: relative; flex: 1; min-height: 108px; }
+    .tp-stack-item canvas { display: block; width: 100% !important; height: 100% !important; max-height: none !important; }
+    .tp-r1c1 { grid-row: 1; grid-column: 1; }
+    .tp-r1c2 { grid-row: 1; grid-column: 2; }
+    .tp-r2c1 { grid-row: 2; grid-column: 1; }
+    .tp-r2c2 { grid-row: 2; grid-column: 2; }
+    .tp-r3c1 { grid-row: 3; grid-column: 1; }
+    .tp-r3c2 { grid-row: 3; grid-column: 2; }
+    .tp-summary-col { grid-column: 3; grid-row: 1 / 4; display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; min-height: 0; }
+    .tp-summary-col .section-label.tp { font-size: 0.68rem; margin: 0; line-height: 1.3; min-height: 2.5em; }
+    .tp-summary-col .chart-box { flex: 1; display: flex; flex-direction: column; padding: 0.5rem 0.55rem; min-height: 0; }
+    .tp-summary-col .chart-canvas-tall { flex: 1; position: relative; min-height: 0; }
+    .tp-summary-col canvas { display: block; width: 100% !important; height: 100% !important; max-height: none !important; }
+    @media (max-width: 860px) { .two-col, .three-col, .ofr-grid, .tp-four-col, .tp-layout-3col { grid-template-columns: 1fr; } .ofr-chart-col { max-width: none; } .slide { padding: 1.5rem; } .tp-summary-col .chart-canvas-tall { min-height: 260px; } }
+    .tp-block .section-label { margin-top: 0; }
+    .tp-chart-compact canvas { max-height: 175px !important; }
+    .tp-block .chart-box { overflow: visible; padding-top: 0.35rem; }
+    .tp-block .chart-box canvas { max-height: 185px !important; }
+    .tp-block.tp-text .detail-list li { padding: 0.42rem 0; font-size: 0.78rem; line-height: 1.45; }
+    .tp-chart-compact .chart-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent3); margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+<div class="deck">
+
+  <section class="slide cover">
+    <p class="slide-num">Корпоративный дайджест</p>
+    <h1>Статус проектов компании</h1>
+    <p class="subtitle">с января по май 2026 г<br>Руководитель Технической дирекции - Столбов А,<br>Руководитель Проектного офиса - Сорванов О</p>
+    <div class="cover-actions">
+      <a class="btn-download" href="./шаблон_ввода_данных_дайджест.docx" download>Скачать шаблон Word для обновления дайджеста</a>
+      <a class="btn-secondary" href="./дайджест_структура.md" download>Структура (MD)</a>
+    </div>
+    <p class="subtitle" style="margin-top:1rem;font-size:0.82rem">Заполните DOCX → передайте в проектный офис / Cursor — обновим HTML и PPTX</p>
+  </section>
+
+
+  <!-- Portfolio -->
+  <section class="slide">
+    <div class="slide-header"><div><p class="slide-num">Слайд 1</p><h2>Портфель по страховым компаниям</h2><p class="subtitle">с января по май 2026 года</p></div></div>
+    <table>
+      <thead><tr><th>СК</th><th>Проект</th><th>Выполнено</th><th>В работе</th></tr></thead>
+      <tbody>
+        <tr><td>РГС</td><td>VFOS</td><td>61 круп. задача</td><td>21</td></tr>
+        <tr><td>РГС</td><td>ОФР (ИФЛ, Базовая, Сервисная)</td><td>13 блоков функционала</td><td>3 блока</td></tr>
+        <tr><td>РГС</td><td>Аутстафф GuideWire / Импульс</td><td>KASKO/OSAGO, ипотека</td><td>—</td></tr>
+        <tr><td>РГС</td><td>РГС Ипотека</td><td>27</td><td>5</td></tr>
+        <tr><td>Согласие</td><td>Согласие Ипотека</td><td>29</td><td>9</td></tr>
+        <tr><td>Согласие</td><td>Вита / НПФ / Банки</td><td>45</td><td>52</td></tr>
+        <tr><td>Согласие</td><td>VFOS Согласие</td><td>12 задач</td><td>—</td></tr>
+        <tr><td>Альфа</td><td>VFOS Альфа</td><td>2FA, jump-сервер</td><td>—</td></tr>
+        <tr><td>Райффайзен</td><td>VFOS Райффайзен</td><td>Архит. описания</td><td>—</td></tr>
+        <tr><td>Ренессанс</td><td>Ренессанс Ипотека</td><td>9</td><td>6</td></tr>
+        <tr><td>Инсайт</td><td>Инсайт Ипотека</td><td>—</td><td>—</td></tr>
+        <tr><td>ВСК/МСГ</td><td>ВСК Автострахование, ВСК ДМС, МСГ</td><td>21</td><td>8</td></tr>
+        <tr><td>—</td><td>Virtu Drive</td><td>6 доработок в период паузы</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- RGS VFOS -->
+  <section class="slide">
+    <div class="slide-header"><div><p class="slide-num">Слайд 2</p><h2 class="vfos-portfolio">VFOS: РГС (ДМС, АВТО, ИФЛ, ВЗР), АЛЬФА Ипотека, Согласие ВЗР, Райффайзен (КСН, МББ, ВЗР)</h2><p class="subtitle">PM: Сорванов О.Н. · Аккаунт: Черноус С. · 61 выполнено · 21 в работе · команда 7 чел.</p></div></div>
+    <div class="ofr-grid">
+      <div class="ofr-chart-col">
+        <div class="team-chart-item">
+          <div class="team-label blue">Команда VFOS</div>
+          <div class="chart-box">
+            <div class="chart-title">Состав команды (чел.)</div>
+            <div class="chart-canvas-wrap compact-sm"><canvas id="chartVFOS"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="ofr-content-col">
+        <p class="section-label">Реализованы ключевые активности:</p>
+        <table class="gratitude-table vfos-activities" style="margin-top:0">
+          <thead><tr><th>СК</th><th>Направление</th><th>Реализованный функционал</th><th>План на 1-й год</th></tr></thead>
+          <tbody>
+            <tr class="grp-amber"><td class="sk-cell" rowspan="6">РГС</td><td class="vfos-dir">Госуслуги.Дом</td><td class="vfos-func">Запуск КСП ИФЛ через партнёра; сервис .NET 10, OAuth2/Keycloak, асинхронная очередь с ретраями, mock-контур</td><td>60 млн ₽</td></tr>
+            <tr class="grp-amber"><td class="vfos-dir">Кросс-продажи ПВС МВД</td><td class="vfos-func">«Добро пожаловать в гости» (152 прав.) + «РГС Гость_2016» (220 прав.) через API для ФГУП ПВС МВД</td><td>100 млн ₽</td></tr>
+            <tr class="grp-amber"><td class="vfos-dir">Автовыгрузка</td><td class="vfos-func">НС, ИФЛ, ДМС в учётную систему / ЕКИС без ручной загрузки XML; снижение операционных трудозатрат</td><td>—</td></tr>
+            <tr class="grp-amber"><td class="vfos-dir">НСИС</td><td class="vfos-func">Передача данных личного страхования (ЭФ, API, загрузчики) по требованиям ЦБ</td><td>—</td></tr>
+            <tr class="grp-amber"><td class="vfos-dir">Keycloak</td><td class="vfos-func">Полный переход авторизации (Волосников А.); ~10 000 пользователей/день</td><td>—</td></tr>
+            <tr class="grp-amber"><td class="vfos-dir">3-й интегр. контур</td><td class="vfos-func">Развёрнут третий интеграционный контур по запросу РГС</td><td>—</td></tr>
+            <tr class="sk-alpha"><td class="sk-cell">Альфа</td><td class="vfos-dir">Инфраструктура</td><td class="vfos-func">Осуществлён переход на 2FA и jump-сервер для работы с ресурсами СК</td><td>—</td></tr>
+            <tr class="sk-raif"><td class="sk-cell">Райффайзен</td><td class="vfos-dir">Архитектура</td><td class="vfos-func">Составлены детальные описания архитектурных решений в части интеграции VFOS — банковская система СК</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFR -->
+  <section class="slide">
+    <div class="slide-header"><div><p class="slide-num">Слайд 3</p><h2>ОФР и Аутстафф РГС</h2><p class="subtitle">PM: Сорванов О. · Аккаунт: Черноус С. · ОФР — 14 чел. · Аутстафф — 6 чел.</p></div></div>
+    <div class="ofr-grid">
+      <div class="ofr-chart-col">
+        <div class="team-chart-stack">
+          <div class="team-chart-item">
+            <div class="team-label blue">Команда ОФР</div>
+            <div class="chart-box">
+              <div class="chart-title">Состав команды (чел.)</div>
+              <div class="chart-canvas-wrap compact-sm"><canvas id="chartOFR"></canvas></div>
+            </div>
+          </div>
+          <div class="team-chart-item">
+            <div class="team-label amber">Команда Аутстафф</div>
+            <div class="chart-box">
+              <div class="chart-title">Состав команды (чел.)</div>
+              <div class="chart-canvas-wrap compact-sm"><canvas id="chartOutstaff"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ofr-content-col">
+        <p class="section-label">Реализованы ключевые активности:</p>
+        <p class="team-section-label ofr">ОФР. ИФЛ</p>
+        <ul class="detail-list team-block ofr">
+          <li>Сервис <strong>getSellerProfile</strong> — единый сервис для всех команд: получение данных продавца и подчинённых с возможностью работы при полной недоступности систем-источников</li>
+          <li>Переход на «умную» систему получения договоров — снижение нагрузки на GuideWire</li>
+          <li>Улучшение платёжной машины: транзакционность, блокировка одной транзакции в единицу времени, логирование, уведомления об ошибках оплаты в messenger</li>
+        </ul>
+        <p class="team-section-label ofr">ОФР. Базовая и Сервисная</p>
+        <ul class="detail-list team-block ofr">
+          <li>Выпуск 3 новых продуктов на Резолют (2 с пролонгацией) и 1 нового продукта на GW с пролонгацией</li>
+          <li>Стабилизация и ускорение продуктов КСП</li>
+          <li>Улучшение процесса оплаты — оплата на следующий день</li>
+          <li>Улучшение работы списка договоров</li>
+          <li>Система <strong>ofr-core-rights</strong> — получение и проверка прав пользователя, «умное» включение прав</li>
+        </ul>
+        <p class="team-section-label ofr">ОФР. ИФЛ и Базовая</p>
+        <ul class="detail-list team-block ofr">
+          <li>Перевод авторизации на импортозамещённую систему <strong>Blitz</strong></li>
+          <li>Поиск коллег и старых ЛНР по продавцам — удобное отображение и перехват задач</li>
+          <li>Ускорение системы «Флагман» на всех этапах: кэширование, оптимизация запуска и работы BFF</li>
+          <li>Мониторинг доступности 15 внешних систем — проверка каждые 5 минут, графики для поддержки</li>
+          <li>Подготовка перехода на GitLab</li>
+        </ul>
+        <p class="team-section-label outstaff">Аутстафф</p>
+        <ul class="detail-list team-block outstaff">
+          <li><strong>GuideWire</strong> — KASKO/OSAGO OpenAPI; дефекты и интеграции (NSIS, Dadata); новые продукты; изменение и расторжение</li>
+          <li class="gw-note"><strong>GuideWire (поддержка)</strong> — с января 89 задач (инциденты, баги, фичи); ~95% — баги и инциденты. Значимый кейс: остановка пролонгации ОСАГО после выката «изменение ОСАГО» другим подрядчиком — устранены 2 инцидента высокого приоритета</li>
+          <li><strong>Импульс</strong> — андеррайтинг ипотеки: логика решений, оформление, продуктовые сценарии</li>
+        </ul>
+        <p class="team-section-label ofr">ОФР. ИФЛ — в работе</p>
+        <ul class="detail-list team-block ofr">
+          <li>Внесение изменений и андеррайтинг</li>
+          <li>Структура пользователей «Флагман»</li>
+          <li>Переход на сервисы «Импульс» для данных пользователей</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mortgage - dev only -->
+  <section class="slide">
+    <div class="slide-header"><div><p class="slide-num">Слайд 4</p><h2>Ипотечный портфель</h2><p class="subtitle">PM: Кузнецова А. · Аккаунт: Черноус С., Клейн Т., Конкин М. · команда 8 чел. · 0 инцидентов за май</p></div></div>
+    <div class="ofr-grid team-single">
+      <div class="ofr-chart-col">
+        <div class="team-chart-item">
+          <div class="team-label blue">Состав команды</div>
+          <div class="chart-box">
+            <div class="chart-title">Состав команды (чел.)</div>
+            <div class="chart-canvas-wrap"><canvas id="chartMortgageTeam"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="ofr-content-col">
+        <p class="section-label">Реализованы ключевые активности:</p>
+        <table class="gratitude-table" style="margin-top:0">
+          <thead><tr><th>Площадка</th><th>Реализованный функционал</th><th>Сделано / в работе</th></tr></thead>
+          <tbody>
+            <tr class="grp-blue"><td>РГС Ипотека</td><td>Доп. соглашения с доплатой на проде — сокращение ручного труда СК; S3 для аттачей (dev/preprod), первые в компании; prod и −2/3 БД — июнь 2026</td><td>27 / 5</td></tr>
+            <tr class="grp"><td>Ренессанс Ипотека</td><td>В B2B реализовали возможность менеджеру вернуть договор из онлайн-пролонгации клиента на ручную пролонгацию</td><td>9 / 6</td></tr>
+            <tr class="grp-purple"><td>Инсайт Ипотека</td><td>Прод, развитие; регресс и нагрузочное тестирование; 0 инцидентов за май</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Soglasie -->
+  <section class="slide">
+    <div class="slide-header"><div><p class="slide-num">Слайд 5</p><h2>Согласие — Ипотека и Вита; Гелиос, Солидарность, ВСК, МСГ</h2><p class="subtitle">PM: Кочетков Н., Царёва А. · Аккаунт: Клейн Т., Конкин М.<br>Согласие Ипотека — 29 вып, 9 в работе<br>ВИТА\НПФ\Банки\Гелиос\Солидарность — 45 вып, 52 в работе</p></div></div>
+    <div class="ofr-grid">
+      <div class="ofr-chart-col">
+        <div class="team-chart-stack">
+          <div class="team-chart-item">
+            <div class="team-label purple">Команда Вита / НПФ</div>
+            <div class="chart-box">
+              <div class="chart-title">Состав команды (чел.)</div>
+              <div class="chart-canvas-wrap compact-xs"><canvas id="chartSoglasieVita"></canvas></div>
+            </div>
+          </div>
+          <div class="team-chart-item">
+            <div class="team-label purple">Команда Ипотека</div>
+            <div class="chart-box">
+              <div class="chart-title">Состав команды (чел.)</div>
+              <div class="chart-canvas-wrap compact-xs"><canvas id="chartSoglasieIpoteka"></canvas></div>
+            </div>
+          </div>
+          <div class="team-chart-item">
+            <div class="team-label blue">Команда ВСК / МСГ</div>
+            <div class="chart-box">
+              <div class="chart-title">Состав команды (чел.)</div>
+              <div class="chart-canvas-wrap compact-xs"><canvas id="chartSoglasieVSK"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ofr-content-col">
+        <p class="section-label">Реализованы ключевые активности:</p>
+        <table class="gratitude-table" style="margin-top:0">
+          <thead><tr><th>Блок</th><th>Детализация</th><th>Результат</th></tr></thead>
+          <tbody>
+            <tr class="grp-amber"><td>Интеграция ВТБ ELM</td><td>Интеграция пользователей JX→ELM; сервис обновления данных (сброс пароля, регистрация); интеграция с календарём ELM; автоматическая отправка пула договоров к пролонгации в ELM</td><td>~1 000 ч</td></tr>
+            <tr class="grp-amber"><td>Спецусловия партнёров</td><td>Настройка спецтарифов для групп партнёров (группы тарификации); сервис присвоения группы по ИКП; автоматическое определение группы и применение тарифов при создании договора</td><td>—</td></tr>
+            <tr class="grp-amber"><td>Журнал пролонгации</td><td>Крупный блок доработок журнала пролонгации и механизмов пролонгации многолетних договоров</td><td>> 8 000 ч</td></tr>
+            <tr class="grp"><td>Вита / НПФ / Банки</td><td>Разработка лендинга ПДС; регулярные доработки существующих продуктов различной степени сложности</td><td>45 вып / 52 в работе<br>> 8 млн ₽</td></tr>
+            <tr class="grp-purple"><td>МП Эльбрус</td><td>Финальное согласование макетов МП для ЛК клиента, подготовка окружения, передача заказчику на тестирование.</td><td>Финал работ в июне 2026 г.</td></tr>
+            <tr class="grp-blue"><td>ВСК / МСГ</td><td>Миграция данных Автострахование. Восстановление системы. Добавление программ «Гарантия авто Грузовые» и «Гарантия Li Auto»</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALL Tech Support -->
+  <section class="slide">
+    <div class="slide-header"><div><p class="slide-num">Слайд 6</p><h2>Техническая поддержка — все проекты и системы</h2><p class="subtitle">с января по май 2026 · Руководитель поддержки: Смирнова А. · Руководитель тех.дирекции: Столбов А.</p></div></div>
+    <div class="tp-layout-3col">
+      <div class="tp-stack-item tp-r1c1">
+        <p class="section-label tp">VFOS — 3 897 задач</p>
+        <div class="chart-box"><div class="chart-canvas-mini"><canvas id="chartVFOSTP"></canvas></div></div>
+      </div>
+      <div class="tp-stack-item tp-r1c2">
+        <p class="section-label tp">Согласие Ипотека — 29 задач</p>
+        <div class="chart-box"><div class="chart-canvas-mini"><canvas id="chartSoglIpTP"></canvas></div></div>
+      </div>
+      <div class="tp-stack-item tp-r2c1">
+        <p class="section-label tp">Ипотечный портфель (РГС, Ренессанс, Инсайт) — 864 задачи</p>
+        <div class="chart-box"><div class="chart-canvas-mini"><canvas id="chartMortgageTP"></canvas></div></div>
+      </div>
+      <div class="tp-stack-item tp-r2c2">
+        <p class="section-label tp">Альфа VFOS — 8 задач</p>
+        <div class="chart-box"><div class="chart-canvas-mini"><canvas id="chartAlphaTP"></canvas></div></div>
+      </div>
+      <div class="tp-stack-item tp-r3c1">
+        <p class="section-label tp">Virtu Drive — 80 заявок</p>
+        <div class="chart-box"><div class="chart-canvas-mini"><canvas id="chartVirtuTP"></canvas></div></div>
+      </div>
+      <div class="tp-stack-item tp-r3c2">
+        <p class="section-label tp">Согласие VFOS — 14 задач</p>
+        <div class="chart-box"><div class="chart-canvas-mini"><canvas id="chartSoglVFOSTP"></canvas></div></div>
+      </div>
+      <div class="tp-summary-col">
+        <p class="section-label tp">Закрытые задачи ТП по системам (шт.)</p>
+        <div class="chart-box">
+          <div class="chart-canvas-tall"><canvas id="chartTPAll"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pre-sale -->
+  <section class="slide">
+    <div class="slide-header"><div><p class="slide-num">Слайд 7</p><h2>VirtuDrive, Pre-sale и новые инициативы</h2><p class="subtitle">PM: Шейко Н. · Аккаунт: Чесноков Д.</p></div></div>
+    <div class="ofr-grid presale-grid">
+      <div class="ofr-chart-col">
+        <div class="team-chart-item">
+          <div class="team-label amber">Команда Virtu Drive</div>
+          <div class="chart-box">
+            <div class="chart-title">Состав команды (чел.)</div>
+            <div class="chart-canvas-wrap"><canvas id="chartVirtuTeam"></canvas></div>
+          </div>
+        </div>
+      </div>
+      <div class="ofr-content-col">
+        <table class="gratitude-table" style="margin-top:0">
+          <thead><tr><th>Проект</th><th>Статус</th><th>Следующий шаг</th><th>Дедлайн</th></tr></thead>
+          <tbody>
+            <tr><td>Virtu Drive</td><td><span class="badge badge-pause">Пауза (бессрочно)</span></td><td>On-hold</td><td>—</td></tr>
+            <tr><td>Тендер Автофинанс — Модуль Страховки</td><td><span class="badge badge-wait">Ожидание</span></td><td>Ответ заказчика по КП</td><td>01.06.2026</td></tr>
+            <tr><td>Мобильное приложение Агента ЛК</td><td><span class="badge badge-wait">Демо</span></td><td>КП T-Лизинг, встреча ОЛА</td><td>15.06.2026</td></tr>
+            <tr><td>Конструктор комиссионных продуктов</td><td><span class="badge badge-wait">Discovery</span></td><td>Встречи: ГК Евроальянс, ГК Керг</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gratitude table -->
+  <section class="slide">
+    <div class="slide-header"><div><p class="slide-num">Слайд 8</p><h2>Благодарность сотрудникам за реализацию функционала</h2></div></div>
+    <table class="gratitude-table">
+      <thead><tr><th>Площадка</th><th>Сотрудники</th><th>Реализованный функционал</th></tr></thead>
+      <tbody>
+        <tr class="grp-blue"><td>VFOS РГС</td><td>Рыжикова Ю., Рудченко П., Сивогривова Н., Нижурин С., Агалетдинов А., Кукарин Д., Волосников А.</td><td>Интеграция Госуслуги.Дом; кросс-продажи мигрантам; автовыгрузка в ЕКИС; передача в НСИС; переход на Keycloak</td></tr>
+        <tr class="grp-blue"><td>РГС Ипотека</td><td>Павлова И., Пустохин А., Крысина А., Ситник Д., Спирчина Н., Редько Г., Аравопуло Е.</td><td>Допсоглашение по техкоррекции с доплатой; онлайн-пролонгация; онлайн-пролонгация однолетних договоров в коробке</td></tr>
+        <tr class="grp"><td>Ренессанс Ипотека</td><td>Ульянова М., Ситник Д., Белоусов Е.</td><td>Дополнения к реализации ПК по НСиБ; не прекращать онлайн-пролонгацию при ручных действиях сотрудника в UI; новый вид скидки «Скидка андеррайтера» для БИ</td></tr>
+        <tr class="grp"><td>ОФР.ИФЛ</td><td>Грабер Д., Кошкина О., Ташбулатова В., Кудяков С., Лобов О., Тетерин М., Максимова Е.</td><td>Продажи и пролонгация; согласование скидок и сверхлимитов; перехват задач на согласование; расторжение; техкоррекция</td></tr>
+        <tr class="grp"><td>ОФР.Базовая / Сервисная</td><td>Попков Д., Искаков Т., Тамаев Р.</td><td>4 новых продукта ДМС через B2B Резолют с проксированием в УС GW</td></tr>
+        <tr class="grp-amber"><td>GuideWire</td><td>Шеламов А., Щербаков Д.</td><td>Стабилизация KASKO/OSAGO OpenAPI; новые продукты (бесполисные, ДСАГО); изменение и расторжение</td></tr>
+        <tr class="grp-amber"><td>Импульс</td><td>Резниченко Д.</td><td>Андеррайтинг ипотечных договоров: логика решений, расчёт, оформление, оплата</td></tr>
+        <tr class="grp-purple"><td>Согласие Ипотека</td><td>Мазанова А., Базуева И., Дмитриев Э., Сергеева Е., Купченков А., Воронов И., Савельева А., Демшина А., Ситник Д.</td><td>Интеграция ВТБ ELM; спецусловия партнёров; журнал пролонгации и многолетние договоры</td></tr>
+        <tr class="grp-purple"><td>Согласие Вита / НПФ</td><td>Патрушева О., Понина В., Купченков А., Яковлев А., Коротков А., Сергеева Е., Дорофеева Ю.</td><td>Лендинг ПДС; регулярные доработки продуктов — 35 доработок, > 8 млн ₽</td></tr>
+        <tr class="grp-blue"><td>ВСК / МСГ</td><td>Бактикова Ф., Костарев А., Воронов И.</td><td>Миграция данных Автострахование. Восстановление системы. Добавление программ «Гарантия авто Грузовые» и «Гарантия Li Auto»</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- PM matrix -->
+  <section class="slide">
+    <div class="slide-header"><div><p class="slide-num">Слайд 9</p><h2>Матрица ответственности PM</h2><p class="subtitle">с января по май 2026 года</p></div></div>
+    <table class="pm-matrix">
+      <thead><tr><th>PM</th><th>Проекты</th><th>Разработка<br>(вып. / в раб.)</th><th>ТП (задач)</th></tr></thead>
+      <tbody>
+        <tr><td>Сорванов&nbsp;О.Н.</td><td>VFOS РГС, Альфастрахование, Согласие, Райффайзен, ОФР</td><td>61 / 21 (VFOS РГС)</td><td>3 897 (VFOS) + 22 (Альфа/Согл.)</td></tr>
+        <tr><td>Кузнецова А.</td><td>РГС / Ренессанс / Инсайт Ипотека</td><td>27 / 5 (РГС) + 9 / 6 (Рен.)</td><td>864</td></tr>
+        <tr><td>Кочетков Н.,<br>Царёва А.</td><td>Согласие Вита, Согласие Банки, Согласие НПФ, Согласие Мигрант, Солидарность, Гелиос</td><td>45 / 52</td><td>—</td></tr>
+        <tr><td>Кочетков Н.,<br>Царёва А.</td><td>Согласие Ипотека</td><td>29 / 9</td><td>69 конс. + 278 нетип.</td></tr>
+        <tr><td>Кочетков Н.</td><td>ВСК АВТО и ВСК ДМС, МСГ, ВСК Банки</td><td>21 / 8</td><td>—</td></tr>
+        <tr><td>Царёва А.</td><td>МП Эльбрус</td><td>—</td><td>—</td></tr>
+        <tr><td>Шейко Н.</td><td>Virtu Drive, тендеры, ЛК, конструктор</td><td>6 доработок</td><td>80 заявок</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+<footer>Дайджест май 2026</footer>
+
+<script>
+  Chart.register(ChartDataLabels);
+  Chart.defaults.color = '#8b9cb3';
+  Chart.defaults.borderColor = '#2d3a4f';
+  Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+  const colors = ['#3b82f6','#10b981','#f59e0b','#8b5cf6','#ef4444','#06b6d4'];
+  const labelOpts = {
+    color: '#e8edf4', anchor: 'end', align: 'top', font: { weight: 'bold', size: 11 },
+    formatter: v => v.toLocaleString('ru-RU')
+  };
+  const labelOptsHorizTeam = {
+    color: '#e8edf4', anchor: 'end', align: 'right', offset: 6,
+    font: { weight: 'bold', size: 10 },
+    formatter: v => v.toLocaleString('ru-RU'), clip: false
+  };
+  const labelOptsTp = {
+    color: '#f59e0b', anchor: 'end', align: 'top', font: { weight: 'bold', size: 9 },
+    formatter: v => v.toLocaleString('ru-RU'), clip: false
+  };
+  const tpScale = {
+    y: { beginAtZero: true, grace: '18%', ticks: { font: { size: 10 } } },
+    x: { ticks: { font: { size: 10 } } }
+  };
+  const tpChartOpts = {
+    maintainAspectRatio: true,
+    layout: { padding: { top: 22 } },
+    plugins: { legend: { display: false }, datalabels: labelOptsTp },
+    scales: tpScale
+  };
+
+  const horizTeamScale = {
+    indexAxis: 'y',
+    maintainAspectRatio: false,
+    responsive: true,
+    plugins: { legend: { display: false }, datalabels: labelOptsHorizTeam },
+    scales: {
+      x: { beginAtZero: true, suggestedMax: 8, ticks: { font: { size: 9 }, maxTicksLimit: 5 }, title: { display: true, text: 'Человек', color: '#8b9cb3', font: { size: 10 } } },
+      y: { ticks: { autoSkip: false, font: { size: 10, weight: '600' }, color: '#e8edf4' }, grid: { display: false } }
+    },
+    layout: { padding: { left: 0, right: 28, top: 0, bottom: 0 } }
+  };
+
+  const horizTeamScaleCompact = {
+    ...horizTeamScale,
+    scales: { ...horizTeamScale.scales, x: { ...horizTeamScale.scales.x, suggestedMax: 5 } }
+  };
+
+  new Chart(document.getElementById('chartVFOS'), {
+    type: 'bar',
+    data: {
+      labels: ['Аналитики', 'Разработчики', 'QA'],
+      datasets: [{ data: [2, 4, 1], backgroundColor: colors, borderRadius: 6 }]
+    },
+    options: horizTeamScaleCompact
+  });
+
+  new Chart(document.getElementById('chartOFR'), {
+    type: 'bar',
+    data: {
+      labels: ['TypeScript', 'QA', 'БА'],
+      datasets: [{ data: [6, 4, 4], backgroundColor: colors, borderRadius: 6 }]
+    },
+    options: horizTeamScaleCompact
+  });
+
+  new Chart(document.getElementById('chartOutstaff'), {
+    type: 'bar',
+    data: {
+      labels: ['GoSu', 'Аналитик', 'TypeScript', 'Java'],
+      datasets: [{ data: [2, 1, 1, 2], backgroundColor: colors, borderRadius: 6 }]
+    },
+    options: { ...horizTeamScaleCompact, scales: { ...horizTeamScaleCompact.scales, x: { ...horizTeamScaleCompact.scales.x, suggestedMax: 3 } } }
+  });
+
+  new Chart(document.getElementById('chartMortgageTeam'), {
+    type: 'bar',
+    data: {
+      labels: ['Аналитики', 'Разработчики', 'Настройщики'],
+      datasets: [{ data: [2, 4, 2], backgroundColor: colors, borderRadius: 6 }]
+    },
+    options: horizTeamScale
+  });
+
+  new Chart(document.getElementById('chartSoglasieVita'), {
+    type: 'bar',
+    data: {
+      labels: ['Аналитики', 'Разработчики', 'Настройщики'],
+      datasets: [{ data: [2, 4, 1], backgroundColor: colors, borderRadius: 6 }]
+    },
+    options: horizTeamScaleCompact
+  });
+
+  new Chart(document.getElementById('chartSoglasieIpoteka'), {
+    type: 'bar',
+    data: {
+      labels: ['Аналитики', 'Разработчики', 'Настройщики'],
+      datasets: [{ data: [2, 4, 3], backgroundColor: colors, borderRadius: 6 }]
+    },
+    options: horizTeamScaleCompact
+  });
+
+  new Chart(document.getElementById('chartSoglasieVSK'), {
+    type: 'bar',
+    data: {
+      labels: ['Аналитики', 'Разработчики'],
+      datasets: [{ data: [1, 2], backgroundColor: colors, borderRadius: 6 }]
+    },
+    options: { ...horizTeamScaleCompact, scales: { ...horizTeamScaleCompact.scales, x: { ...horizTeamScaleCompact.scales.x, suggestedMax: 3 } } }
+  });
+
+  new Chart(document.getElementById('chartVirtuTeam'), {
+    type: 'bar',
+    data: {
+      labels: ['Аналитик', 'Java'],
+      datasets: [{ data: [1, 2], backgroundColor: colors, borderRadius: 6 }]
+    },
+    options: { ...horizTeamScaleCompact, scales: { ...horizTeamScaleCompact.scales, x: { ...horizTeamScaleCompact.scales.x, suggestedMax: 3 } } }
+  });
+
+  const labelOptsTpH = {
+    color: '#f59e0b', anchor: 'end', align: 'right', offset: 6,
+    font: { weight: 'bold', size: 9 },
+    formatter: v => v.toLocaleString('ru-RU'), clip: false
+  };
+  const tpMiniOpts = (max) => ({
+    maintainAspectRatio: false,
+    layout: { padding: { top: 14 } },
+    plugins: { legend: { display: false }, datalabels: { ...labelOptsTp, font: { weight: 'bold', size: 8 } } },
+    scales: { ...tpScale, y: { beginAtZero: true, suggestedMax: max, grace: '15%', ticks: { font: { size: 9 } } }, x: { ticks: { font: { size: 9 } } } }
+  });
+  const tpSummaryOpts = {
+    indexAxis: 'y',
+    maintainAspectRatio: false,
+    responsive: true,
+    layout: { padding: { right: 42 } },
+    plugins: { legend: { display: false }, datalabels: labelOptsTpH },
+    scales: {
+      x: { beginAtZero: true, grace: '12%', ticks: { font: { size: 9 } } },
+      y: { ticks: { autoSkip: false, font: { size: 10, weight: '600' }, color: '#e8edf4' }, grid: { display: false } }
+    }
+  };
+
+  new Chart(document.getElementById('chartTPAll'), {
+    type: 'bar',
+    data: {
+      labels: ['Virtu Drive', 'Альфа+Согл.', 'Согласие Ипотека', 'Ипотека (РГС, Рен., Инс.)', 'VFOS'],
+      datasets: [{ data: [80, 22, 29, 864, 3897], backgroundColor: colors, borderRadius: 4 }]
+    },
+    options: tpSummaryOpts
+  });
+
+  new Chart(document.getElementById('chartVFOSTP'), {
+    type: 'bar',
+    data: {
+      labels: ['Доступы', 'Изм. БД', 'Инцид.', 'Прод.', 'Проч.'],
+      datasets: [{ data: [2874, 596, 238, 138, 51], backgroundColor: colors, borderRadius: 4 }]
+    },
+    options: tpMiniOpts(3400)
+  });
+
+  new Chart(document.getElementById('chartMortgageTP'), {
+    type: 'bar',
+    data: {
+      labels: ['Нетип.', 'Подкл.', 'Конс.', 'Аварии'],
+      datasets: [{ data: [537, 204, 27, 11], backgroundColor: colors, borderRadius: 4 }]
+    },
+    options: tpMiniOpts(650)
+  });
+
+  new Chart(document.getElementById('chartVirtuTP'), {
+    type: 'bar',
+    data: {
+      labels: ['Конс.', 'Нетип.'],
+      datasets: [{ data: [7, 73], backgroundColor: colors, borderRadius: 4 }]
+    },
+    options: tpMiniOpts(85)
+  });
+
+  new Chart(document.getElementById('chartSoglIpTP'), {
+    type: 'bar',
+    data: {
+      labels: ['Конс.', 'Нетип.'],
+      datasets: [{ data: [69, 278], backgroundColor: colors, borderRadius: 4 }]
+    },
+    options: tpMiniOpts(310)
+  });
+
+  new Chart(document.getElementById('chartAlphaTP'), {
+    type: 'bar',
+    data: {
+      labels: ['Конс.', 'Ошиб.', 'Изм-ния', 'Сбой'],
+      datasets: [{ data: [3, 1, 4, 0], backgroundColor: colors, borderRadius: 4 }]
+    },
+    options: tpMiniOpts(5)
+  });
+
+  new Chart(document.getElementById('chartSoglVFOSTP'), {
+    type: 'bar',
+    data: {
+      labels: ['Конс.', 'Ошиб.', 'Изм-ния', 'Сбой'],
+      datasets: [{ data: [6, 2, 4, 2], backgroundColor: colors, borderRadius: 4 }]
+    },
+    options: tpMiniOpts(7)
+  });
+</script>
+</body>
+</html>

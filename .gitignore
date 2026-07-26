@@ -1,0 +1,33 @@
+# OS / IDE
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Large / local source dumps (не публикуем)
+*.pptx
+!docs/**/*.pptx
+Project_Pulse_*.pptx
+*.png
+*.xlsx
+Шейко*.txt
+СОГЛАСИЕ*.txt
+РГС VFOS*.txt
+Кузнецова*.txt
+ТП другие*.txt
+vfos_sprint.xlsx
+
+# Generated PPTX stays local unless explicitly added
+output/*.pptx
+
+# Secrets
+.env
+*.pem
+credentials*.json

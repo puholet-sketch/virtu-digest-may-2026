@@ -1,0 +1,19 @@
+{
+  "context_version": 1,
+  "timestamp": "2026-07-26T20:31:00+03:00",
+  "context_hash": null,
+  "active_files": [
+    "output/презентация_статус_проектов_май_2026.html",
+    "templates/generate_digest_input_docx.py",
+    "docs/index.html"
+  ],
+  "active_file_hashes": {},
+  "decisions": [
+    "Публикация через GitHub Pages (docs/)",
+    "Word-шаблон ввода — красно-чёрная палитра Virtu/JX"
+  ],
+  "blockers": [],
+  "last_error": null,
+  "retry_count": 0,
+  "next_action": "push repo and enable Pages"
+}
