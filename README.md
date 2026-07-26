@@ -10,7 +10,7 @@
   https://puholet-sketch.github.io/virtu-digest-may-2026/%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%B2%D0%B2%D0%BE%D0%B4%D0%B0_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85_%D0%B4%D0%B0%D0%B9%D0%B4%D0%B6%D0%B5%D1%81%D1%82.docx  
   (файл [`docs/шаблон_ввода_данных_дайджест.docx`](docs/шаблон_ввода_данных_дайджест.docx))
 
-После публикации GitHub Pages:
+После публикации GitHub Pages сайт доступен по ссылкам выше.
 
 ## Что в репозитории
 
